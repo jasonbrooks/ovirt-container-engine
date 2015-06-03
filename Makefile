@@ -1,6 +1,13 @@
+IMG=docker.io/fabiand/ovirt-engine-3.5:latest
 
 build: Dockerfile
-	docker build -t docker.io/fabiand/engine:latest .
+	docker build -t $(IMG) .
 
-d.%: build
-	$(shell sed -n "/LABEL $* docker/ s/LABEL $*// p" Dockerfile)
+publish: build
+	docker push $(IMG)
+
+install:
+	atomic install $(IMG)
+
+uninstall:
+	atomic uninstall $(IMG)

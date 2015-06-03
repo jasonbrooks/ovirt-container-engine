@@ -3,13 +3,13 @@
 OVESETUP_DIALOG/confirmSettings=bool:True
 OVESETUP_CONFIG/applicationMode=str:virt
 OVESETUP_CONFIG/remoteEngineSetupStyle=none:None
-OVESETUP_CONFIG/adminPassword=str:ovirt
+OVESETUP_CONFIG/adminPassword=str:@ADMINPASSWORD@
 OVESETUP_CONFIG/storageIsLocal=bool:False
 OVESETUP_CONFIG/firewallManager=str:firewalld
 OVESETUP_CONFIG/remoteEngineHostRootPassword=none:None
 OVESETUP_CONFIG/updateFirewall=bool:False
 OVESETUP_CONFIG/remoteEngineHostSshPort=none:None
-OVESETUP_CONFIG/fqdn=str:3e79557bdfbc
+OVESETUP_CONFIG/fqdn=str:@FQDN@
 OVESETUP_CONFIG/storageType=none:None
 OSETUP_RPMDISTRO/requireRollback=none:None
 OSETUP_RPMDISTRO/enableUpgrade=none:None

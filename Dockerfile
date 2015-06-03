@@ -1,26 +1,45 @@
-FROM centos:centos7
-MAINTAINER "Fabian Deutsch" <fabiand@redhat.com>
-ENV container docker
-RUN yum -y update && yum clean all
+# vim: set et sts=4:
+FROM docker.io/centos:centos7
 
-	RUN yum install -y http://plain.resources.ovirt.org/pub/yum-repo/ovirt-release36.rpm
+MAINTAINER "Fabian Deutsch" <fabiand@redhat.com>
+
+ENV container docker
+
+# Upgrade CentOS
+RUN yum -y makecache fast && yum -y update && yum clean all
+
+# Install oVirt Engine
+RUN yum install -y http://plain.resources.ovirt.org/pub/yum-repo/ovirt-release35.rpm
 RUN yum install --nogpgcheck -y ovirt-engine
 
-RUN yum install -y passwd && passwd -d root
+# Enable autologin of root
+RUN sed "/^ExecStart/ s/agetty/agetty -a root/" /usr/lib/systemd/system/console-getty.service > /etc/systemd/system/console-getty.service
 
-RUN yum install -y openssh-server
-
-EXPOSE 22
 EXPOSE 80
 EXPOSE 443
 
-# https://github.com/docker/docker/blob/master/docs/sources/userguide/labels-custom-metadata.md
-LABEL run docker run --name engine -p 443:443 -p 80:80 --cap-add=ALL -v /sys/fs/cgroup:/sys/fs/cgroup:ro -it docker.io/fabiand/engine
-LABEL run-ext-vols docker run --name engine --rm --volumes-from engine-data -p 443:443 -p 80:80 --cap-add=ALL -v /sys/fs/cgroup:/sys/fs/cgroup:ro -it docker.io/fabiand/engine
+# Persist these dirs
+VOLUME ["/etc", "/var"]
 
-COPY *-answers /root/
-
-# chaneg hostname at deploy time: http://www.ovirt.org/Changing_Engine_Hostname
-#RUN engine-setup --offline --config-append=/root/complete-answers
-
+# Start systemd
 CMD ["/usr/sbin/init"]
+
+# Copy in some data
+COPY data/*-answers /root/
+RUN mkdir /container
+COPY container/* /container/
+
+# To install we run a 'transient' container which will be removed afterwards again.
+# We need to do this to get to the atomic-install command inside the image.
+# To operate with the hosts docker, we pass in the host fs.
+LABEL INSTALL docker run \
+    --rm \
+    -v /:/host \
+    -e FQDN=$(hostname) -e ADMINPASSWORD=${ADMINPW:-ovirt} -e NAME=NAME -e IMAGE=IMAGE \
+    IMAGE container/atomic-install.sh
+
+LABEL RUN docker start NAME
+
+#LABEL RUN-W-VOLS docker run --name engine --rm --volumes-from engine-data -p 443:443 -p 80:80 --cap-add=ALL -v /sys/fs/cgroup:/sys/fs/cgroup:ro -it docker.io/fabiand/engine
+
+
