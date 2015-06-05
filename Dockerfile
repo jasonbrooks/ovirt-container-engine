@@ -35,7 +35,7 @@ COPY container/* /container/
 LABEL INSTALL docker run \
     --rm \
     -v /:/host \
-    -e FQDN=$(hostname) -e ADMINPASSWORD=${ADMINPW:-ovirt} -e NAME=NAME -e IMAGE=IMAGE \
+    -e FQDN=\$(hostname) -e ADMINPASSWORD=\${ADMINPW:-ovirt} -e NAME=NAME -e IMAGE=IMAGE \
     IMAGE container/atomic-install.sh
 
 LABEL RUN docker start NAME

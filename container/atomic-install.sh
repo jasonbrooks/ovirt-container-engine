@@ -9,6 +9,7 @@ hostdocker() { chroot /host docker $@ ; }
 # Create the real Engine container
 # FIXME cap-add - use fewer privileges
 hostdocker create \
+    --privileged \
     --cap-add=ALL \
     -p 80:80 \
     -p 443:443 \
