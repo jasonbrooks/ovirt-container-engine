@@ -9,7 +9,7 @@ ENV container docker
 RUN yum -y makecache fast && yum -y update && yum clean all
 
 # Install oVirt Engine
-RUN yum install -y http://plain.resources.ovirt.org/pub/yum-repo/ovirt-release35.rpm
+RUN yum install -y http://plain.resources.ovirt.org/pub/yum-repo/ovirt-release36.rpm
 RUN yum install --nogpgcheck -y ovirt-engine
 
 # Enable autologin of root
