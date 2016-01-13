@@ -1,4 +1,4 @@
-IMG=docker.io/fabiand/ovirt-engine-3.5:latest
+IMG=docker.io/fabiand/ovirt-engine:latest
 
 build: Dockerfile
 	docker build -t $(IMG) .
